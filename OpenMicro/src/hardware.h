@@ -49,29 +49,29 @@
 
 
 // set zero to disable (0 - 4)
-#define LED_NUMBER 4
+#define LED_NUMBER 2
 
 #define LED1PIN GPIO_Pin_4
 #define LED1PORT GPIOA
 
-#define LED2PIN GPIO_Pin_2
+#define LED2PIN GPIO_Pin_12
 #define LED2PORT GPIOA
 
-#define LED3PIN GPIO_Pin_12
-#define LED3PORT GPIOA
+//#define LED3PIN GPIO_Pin_9
+//#define LED3PORT GPIOA
 
-#define LED4PIN GPIO_Pin_0
-#define LED4PORT GPIOB
+//#define LED4PIN GPIO_Pin_9
+//#define LED4PORT GPIOA
 
 // aux leds
 // set zero to disable (0 - 2)
 #define AUX_LED_NUMBER 1
 
-#define AUX_LED1PIN GPIO_Pin_2
-#define AUX_LED1PORT GPIOB
+#define AUX_LED1PIN GPIO_Pin_9
+#define AUX_LED1PORT GPIOA
 
-#define AUX_LED2PIN GPIO_Pin_x
-#define AUX_LED2PORT GPIOx
+//#define AUX_LED2PIN GPIO_Pin_x
+//#define AUX_LED2PORT GPIOx
 
 // invert - leds turn on when high
 //#define LED1_INVERT
@@ -125,14 +125,11 @@
 #define GYRO_ID_3 0x7D
 #define GYRO_ID_4 0x72
 
-// disable lvc functions
-//#define DISABLE_LVC
-
 // Analog battery input pin and adc channel
 
-#define BATTERYPIN GPIO_Pin_7
-#define BATTERYPORT GPIOA
-#define BATTERY_ADC_CHANNEL ADC_Channel_7
+#define BATTERYPIN GPIO_Pin_1
+#define BATTERYPORT GPIOB
+#define BATTERY_ADC_CHANNEL ADC_Channel_9
 
 // divider setting for adc uses 2 measurements
 // the adc readout can be found in debug mode , debug.adcfilt
@@ -184,17 +181,17 @@
 // enable the pwm pins to be used here ( multiple pins ok)
 #define PWM_PA0
 #define PWM_PA1
-//#define PWM_PA2
-//#define PWM_PA3
+#define PWM_PA2
+#define PWM_PA3
 //#define PWM_PA4
 //#define PWM_PA5
 //#define PWM_PA6
-//#define PWM_PA7
-#define PWM_PA8
-#define PWM_PA9
-//#define PWM_PA10
-//#define PWM_PA11
-//#define PWM_PB0
+#define PWM_PA7
+//#define PWM_PA8
+//#define PWM_PA9
+#define PWM_PA10
+#define PWM_PA11
+#define PWM_PB0
 //#define PWM_PB1
 //#define PWM_PB8
 
@@ -203,10 +200,11 @@
 
 // back-left motor
 // motor 0 pin
+// marked M2 on CG027
 
-#define MOTOR0_PIN_PA0
+//#define MOTOR0_PIN_PA0
 //#define MOTOR0_PIN_PA1
-//#define MOTOR0_PIN_PA2
+#define MOTOR0_PIN_PA2
 //#define MOTOR0_PIN_PA3
 //#define MOTOR0_PIN_PA4
 //#define MOTOR0_PIN_PA5
@@ -222,6 +220,7 @@
 
 // front-left motor
 // motor 1 pin
+// marked M1 on CG027
 
 //#define MOTOR1_PIN_PA0
 #define MOTOR1_PIN_PA1
@@ -241,6 +240,7 @@
 
 // back-right motor
 // motor 2 pin
+// marked M4 on CG027
 
 //#define MOTOR2_PIN_PA0
 //#define MOTOR2_PIN_PA1
@@ -250,16 +250,17 @@
 //#define MOTOR2_PIN_PA5
 //#define MOTOR2_PIN_PA6
 //#define MOTOR2_PIN_PA7
-#define MOTOR2_PIN_PA8
+//#define MOTOR2_PIN_PA8
 //#define MOTOR2_PIN_PA9
 //#define MOTOR2_PIN_PA10
 //#define MOTOR2_PIN_PA11
-//#define MOTOR2_PIN_PB0
+#define MOTOR2_PIN_PB0
 //#define MOTOR2_PIN_PB1
 //#define MOTOR2_PIN_PB8
 
 // front-right motor
 // motor 3 pin
+// marked M3 on CGO27
 
 //#define MOTOR3_PIN_PA0
 //#define MOTOR3_PIN_PA1
@@ -270,12 +271,86 @@
 //#define MOTOR3_PIN_PA6
 //#define MOTOR3_PIN_PA7
 //#define MOTOR3_PIN_PA8
-#define MOTOR3_PIN_PA9
+//#define MOTOR3_PIN_PA9
 //#define MOTOR3_PIN_PA10
-//#define MOTOR3_PIN_PA11
+#define MOTOR3_PIN_PA11
 //#define MOTOR3_PIN_PB0
 //#define MOTOR3_PIN_PB1
 //#define MOTOR3_PIN_PB8
+
+///  REVERSE DIRECTION MOTORS
+
+
+
+//#define REV_MOTOR0_PIN_PA0
+//#define REV_MOTOR0_PIN_PA1
+//#define REV_MOTOR0_PIN_PA2
+#define REV_MOTOR0_PIN_PA3
+//#define REV_MOTOR0_PIN_PA4
+//#define REV_MOTOR0_PIN_PA5
+//#define REV_MOTOR0_PIN_PA6
+//#define REV_MOTOR0_PIN_PA7
+//#define REV_MOTOR0_PIN_PA8
+//#define REV_MOTOR0_PIN_PA9
+//#define REV_MOTOR0_PIN_PA10
+//#define REV_MOTOR0_PIN_PA11
+//#define REV_MOTOR0_PIN_PB0
+//#define REV_MOTOR0_PIN_PB1
+
+// front-left motor
+// motor 1 pin
+
+#define REV_MOTOR1_PIN_PA0
+//#define REV_MOTOR1_PIN_PA1
+//#define REV_MOTOR1_PIN_PA2
+//#define REV_MOTOR1_PIN_PA3
+//#define REV_MOTOR1_PIN_PA4
+//#define REV_MOTOR1_PIN_PA5
+//#define REV_MOTOR1_PIN_PA6
+//#define REV_MOTOR1_PIN_PA7
+//#define REV_MOTOR1_PIN_PA8
+//#define REV_MOTOR1_PIN_PA9
+//#define REV_MOTOR1_PIN_PA10
+//#define REV_MOTOR1_PIN_PA11
+//#define REV_MOTOR1_PIN_PB0
+//#define REV_MOTOR1_PIN_PB1
+
+// back-right motor
+// motor 2 pin
+
+//#define REV_MOTOR2_PIN_PA0
+//#define REV_MOTOR2_PIN_PA1
+//#define REV_MOTOR2_PIN_PA2
+//#define REV_MOTOR2_PIN_PA3
+//#define REV_MOTOR2_PIN_PA4
+//#define REV_MOTOR2_PIN_PA5
+//#define REV_MOTOR2_PIN_PA6
+#define REV_MOTOR2_PIN_PA7
+//#define REV_MOTOR2_PIN_PA8
+//#define REV_MOTOR2_PIN_PA9
+//#define REV_MOTOR2_PIN_PA10
+//#define REV_MOTOR2_PIN_PA11
+//#define REV_MOTOR2_PIN_PB0
+//#define REV_MOTOR2_PIN_PB1
+
+// front-right motor
+// motor 3 pin
+
+//#define REV_MOTOR3_PIN_PA0
+//#define REV_MOTOR3_PIN_PA1
+//#define REV_MOTOR3_PIN_PA2
+//#define REV_MOTOR3_PIN_PA3
+//#define REV_MOTOR3_PIN_PA4
+//#define REV_MOTOR3_PIN_PA5
+//#define REV_MOTOR3_PIN_PA6
+//#define REV_MOTOR3_PIN_PA7
+//#define REV_MOTOR3_PIN_PA8
+//#define REV_MOTOR3_PIN_PA9
+#define REV_MOTOR3_PIN_PA10
+//#define REV_MOTOR3_PIN_PA11
+//#define REV_MOTOR3_PIN_PB0
+//#define REV_MOTOR3_PIN_PB1
+
 
 // gyro orientation
 // the expected orientation is with the dot in the front-left corner

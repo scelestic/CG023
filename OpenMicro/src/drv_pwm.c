@@ -3,6 +3,14 @@
 #include "drv_pwm.h"
 #include "config.h"
 
+int pwmdir = 0;
+
+void pwm_set_forward(uint8_t number, float pwm);
+
+void pwm_set_reverse(uint8_t number, float pwm);
+
+
+
 #ifdef USE_PWM_DRIVER
 
 
@@ -665,9 +673,24 @@ void motorbeep( void)
 }
 
 
-#include  <math.h>
+void pwm_set(uint8_t number, float pwm)
+{
 
-void pwm_set( uint8_t number , float pwmf)
+	if (pwmdir == DIR1)
+	  {
+		  pwm_set_forward(number, pwm);
+	  }
+	if (pwmdir == DIR2)
+	  {
+		  pwm_set_reverse(number, pwm);
+	  }
+
+
+}
+
+#include  <math.h>
+// forward dir
+void pwm_set_forward( uint8_t number , float pwmf)
 {
 	
 int pwm = pwmf * PWMTOP ;
@@ -878,6 +901,281 @@ if ( pwm > PWMTOP ) pwm = PWMTOP;
 	}
 	
 }
+
+
+
+void pwm_set_reverse( uint8_t number , float pwmf)
+{
+	
+int pwm = pwmf * PWMTOP ;
+	
+if ( pwm < 0 ) pwm = 0;
+if ( pwm > PWMTOP ) pwm = PWMTOP;
+
+	
+  switch( number)
+	{
+		case 0:
+			#ifdef REV_MOTOR0_PIN_PA0
+			TIM2->CCR1 = (uint16_t) pwm;
+			#endif
+			#ifdef REV_MOTOR0_PIN_PA1
+			TIM2->CCR2 = (uint16_t) pwm;
+			#endif
+		  #ifdef REV_MOTOR0_PIN_PA2
+			TIM2->CCR3 = (uint16_t) pwm;
+			#endif
+		  #ifdef REV_MOTOR0_PIN_PA3
+			TIM2->CCR4 = (uint16_t) pwm;
+			#endif
+      #ifdef REV_MOTOR0_PIN_PA4
+			TIM14->CCR1 = (uint16_t) pwm;
+			#endif
+		  #ifdef REV_MOTOR0_PIN_PA5
+			TIM2->CCR1 = (uint16_t) pwm;
+			#endif
+      #ifdef REV_MOTOR0_PIN_PA6
+			TIM3->CCR1 = (uint16_t) pwm;
+			#endif
+      #ifdef REV_MOTOR0_PIN_PA7
+			TIM3->CCR2 = (uint16_t) pwm;
+			#endif
+			#ifdef REV_MOTOR0_PIN_PA8
+			TIM1->CCR1 = (uint16_t) pwm;
+			#endif
+			#ifdef REV_MOTOR0_PIN_PA9
+			TIM1->CCR2 = (uint16_t) pwm;
+			#endif	
+			#ifdef REV_MOTOR0_PIN_PA10
+			TIM1->CCR3 = (uint16_t) pwm;
+			#endif	
+			#ifdef REV_MOTOR0_PIN_PA11
+			TIM1->CCR4 = (uint16_t) pwm;
+			#endif
+      #ifdef REV_MOTOR0_PIN_PB0
+			TIM3->CCR3 = (uint16_t) pwm;
+			#endif	
+      #ifdef REV_MOTOR0_PIN_PB1
+			TIM3->CCR4 = (uint16_t) pwm;
+			#endif			
+		break;
+		
+		case 1:
+			#ifdef REV_MOTOR1_PIN_PA0
+			TIM2->CCR1 = (uint16_t) pwm;
+			#endif
+			#ifdef REV_MOTOR1_PIN_PA1
+			TIM2->CCR2 = (uint16_t) pwm;
+		  #endif
+		  #ifdef REV_MOTOR1_PIN_PA2
+			TIM2->CCR3 = (uint16_t) pwm;
+			#endif
+		  #ifdef REV_MOTOR1_PIN_PA3
+			TIM2->CCR4 = (uint16_t) pwm;
+			#endif
+      #ifdef REV_MOTOR1_PIN_PA4
+			TIM14->CCR1 = (uint16_t) pwm;
+			#endif
+		  #ifdef REV_MOTOR1_PIN_PA5
+			TIM2->CCR1 = (uint16_t) pwm;
+			#endif
+      #ifdef REV_MOTOR1_PIN_PA6
+			TIM3->CCR1 = (uint16_t) pwm;
+			#endif
+      #ifdef REV_MOTOR1_PIN_PA7
+			TIM3->CCR2 = (uint16_t) pwm;
+			#endif
+			#ifdef REV_MOTOR1_PIN_PA8
+			TIM1->CCR1 = (uint16_t) pwm;
+			#endif
+			#ifdef REV_MOTOR1_PIN_PA9
+			TIM1->CCR2 = (uint16_t) pwm;
+			#endif		
+		  #ifdef REV_MOTOR1_PIN_PA10
+			TIM1->CCR3 = (uint16_t) pwm;
+			#endif	
+			#ifdef REV_MOTOR1_PIN_PA11
+			TIM1->CCR4 = (uint16_t) pwm;
+			#endif	
+      #ifdef REV_MOTOR1_PIN_PB0
+			TIM3->CCR3 = (uint16_t) pwm;
+			#endif	
+      #ifdef REV_MOTOR1_PIN_PB1
+			TIM3->CCR4 = (uint16_t) pwm;
+      #endif	
+		break;
+		
+		case 2:
+			#ifdef REV_MOTOR2_PIN_PA0
+			TIM2->CCR1 = (uint16_t) pwm;
+			#endif
+			#ifdef REV_MOTOR2_PIN_PA1
+			TIM2->CCR2 = (uint16_t) pwm;
+			#endif
+		  #ifdef REV_MOTOR2_PIN_PA2
+			TIM2->CCR3 = (uint16_t) pwm;
+			#endif
+		  #ifdef REV_MOTOR2_PIN_PA3
+			TIM2->CCR4 = (uint16_t) pwm;
+			#endif
+      #ifdef REV_MOTOR2_PIN_PA4
+			TIM14->CCR1 = (uint16_t) pwm;
+			#endif
+			#ifdef REV_MOTOR2_PIN_PA5
+			TIM2->CCR1 = (uint16_t) pwm;
+			#endif
+      #ifdef REV_MOTOR2_PIN_PA6
+			TIM3->CCR1 = (uint16_t) pwm;
+			#endif
+      #ifdef REV_MOTOR2_PIN_PA7
+			TIM3->CCR2 = (uint16_t) pwm;
+			#endif
+			#ifdef REV_MOTOR2_PIN_PA8
+			TIM1->CCR1 = (uint16_t) pwm;
+			#endif
+			#ifdef REV_MOTOR2_PIN_PA9
+			TIM1->CCR2 = (uint16_t) pwm;
+			#endif	
+			#ifdef REV_MOTOR2_PIN_PA10
+			TIM1->CCR3 = (uint16_t) pwm;
+			#endif	
+			#ifdef REV_MOTOR2_PIN_PA11
+			TIM1->CCR4 = (uint16_t) pwm;
+			#endif	
+      #ifdef REV_MOTOR2_PIN_PB0
+			TIM3->CCR3 = (uint16_t) pwm;
+			#endif	
+      #ifdef REV_MOTOR2_PIN_PB1
+			TIM3->CCR4 = (uint16_t) pwm; 
+      #endif      
+		break;
+		
+		case 3: 
+			#ifdef REV_MOTOR3_PIN_PA0
+			TIM2->CCR1 = (uint16_t) pwm;
+			#endif
+			#ifdef REV_MOTOR3_PIN_PA1
+			TIM2->CCR2 = (uint16_t) pwm;
+			#endif
+		  #ifdef REV_MOTOR3_PIN_PA2
+			TIM2->CCR3 = (uint16_t) pwm;
+			#endif
+		  #ifdef REV_MOTOR3_PIN_PA3
+			TIM2->CCR4 = (uint16_t) pwm;
+			#endif
+      #ifdef REV_MOTOR3_PIN_PA4
+			TIM14->CCR1 = (uint16_t) pwm;
+			#endif
+		  #ifdef REV_MOTOR3_PIN_PA5
+			TIM2->CCR1 = (uint16_t) pwm;
+			#endif
+      #ifdef REV_MOTOR3_PIN_PA6
+			TIM3->CCR1 = (uint16_t) pwm;
+			#endif
+      #ifdef REV_MOTOR3_PIN_PA7
+			TIM3->CCR2 = (uint16_t) pwm;
+			#endif
+			#ifdef REV_MOTOR3_PIN_PA8
+			TIM1->CCR1 = (uint16_t) pwm;
+			#endif
+			#ifdef REV_MOTOR3_PIN_PA9
+			TIM1->CCR2 = (uint16_t) pwm;
+			#endif		
+		  #ifdef REV_MOTOR3_PIN_PA10
+			TIM1->CCR3 = (uint16_t) pwm;
+			#endif	
+			#ifdef REV_MOTOR3_PIN_PA11
+			TIM1->CCR4 = (uint16_t) pwm;
+      #endif
+      #ifdef REV_MOTOR3_PIN_PB0
+			TIM3->CCR3 = (uint16_t) pwm;
+			#endif	
+      #ifdef REV_MOTOR3_PIN_PB1
+			TIM3->CCR4 = (uint16_t) pwm;
+			#endif	
+		break;
+		
+		default:
+			// handle error;
+			//
+		break;	
+				
+	}
+	
+}
+
+
+
+
+void pwm_dir(int dir)
+{
+	if (dir == DIR2)
+	  {
+		  pwmdir = DIR2;
+		  for (int i = 0; i <= 3; i++)
+			  pwm_set_forward(i, 0.0f);
+
+
+	  }
+
+	if (dir == DIR1)
+	  {
+		  pwmdir = DIR1;
+		  for (int i = 0; i <= 3; i++)
+			  pwm_set_reverse(i, 0.0f);
+	
+	  }
+	if (dir == FREE)
+	  {
+		  for (int i = 0; i <= 3; i++)
+		    {
+			    pwm_set_forward(i, 0.0f);
+			    pwm_set_reverse(i, 0.0f);
+		    }
+	
+	  }
+	if (dir == BRAKE)
+	  {
+		  /*
+		     for ( int i = 0 ; i <= 3; i++)
+		     {
+		     pwm_set_forward( i , 0.0f );
+		     pwm_set_reverse( i , 0.0f );
+		     }
+		     delay(100);
+		     GPIO_WriteBit(GPIOF, GPIO_PIN_1, Bit_SET); // bridge dir 1   
+		     GPIO_WriteBit(GPIOA, GPIO_PIN_4, Bit_SET); // bridge dir 2
+		   */
+	  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

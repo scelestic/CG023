@@ -77,6 +77,23 @@ extern int controls_override;
 extern float rx_override[];
 extern int acro_override;
 
+// +++++++++++++++++++++++++++++++++++++++++++++
+int currentdir;
+extern int pwmdir;
+
+void bridge_sequencer(int dir);
+// bridge 
+int stage;
+int laststage;
+int lastdir;
+
+// for 3d throttle
+#ifdef THREE_D_THROTTLE        
+int throttlesafe_3d = 0;
+#endif
+unsigned long bridgetime;
+//++++++++++++++++++++++++++++++++++++++++++++++
+
 float overthrottlefilt = 0;
 float underthrottlefilt = 0;
 
@@ -104,8 +121,33 @@ void control( void)
     rxcopy[0] = rx[0]*rate_multiplier;
     rxcopy[1] = rx[1]*rate_multiplier;   
     rxcopy[2] = rx[2]*rate_multiplier_yaw;   
-    
-    
+
+#ifndef THREE_D_THROTTLE
+       if ( aux[INVERTEDMODE] ) 
+       {
+               bridge_sequencer(REVERSE);      // reverse
+       }
+       else
+       {
+               bridge_sequencer(FORWARD);      // forward
+       }
+#else
+
+#endif
+
+// pwmdir controls hardware directly so we make a copy here
+currentdir = pwmdir;   
+
+if (currentdir == REVERSE)
+               {       
+               #ifndef NATIVE_INVERTED_MODE
+               // invert pitch in reverse mode 
+               //rxtemp[ROLL] = - rx[ROLL];
+               rxcopy[PITCH] = - rx[PITCH];
+               rxcopy[YAW]     = - rx[YAW];    
+               #endif          
+               }
+       
 #ifndef DISABLE_FLIP_SEQUENCER	
   flip_sequencer();
 	
@@ -207,6 +249,25 @@ pid_precalc();
 
 #ifndef ACRO_ONLY
 	// dual mode build
+
+float attitudecopy[2];
+               
+if (currentdir == REVERSE)
+               {       
+               // account for 180 deg wrap since inverted attitude is near 180
+               if ( attitude[0] > 0) attitudecopy[0] = attitude[0] - 180;
+               else attitudecopy[0] = attitude[0] + 180;               
+                       
+               if ( attitude[1] > 0) attitudecopy[1] = attitude[1] - 180;
+               else attitudecopy[1] = attitude[1] + 180;               
+               }
+               else
+               {
+                       // normal thrust mode
+                       attitudecopy[0] = attitudecopy[0];
+                       attitudecopy[1] = attitudecopy[1];
+               }
+
 	if (aux[LEVELMODE]&&!acro_override)
 	  {			// level mode
 		extern	void stick_vector( float);
@@ -263,12 +324,48 @@ pid_precalc();
 	pid(YAW);
 #endif
 
-float	throttle;
+
 
 // map throttle so under 10% it is zero	
-if ( rx[3] < 0.1f ) throttle = 0;
-else throttle = (rx[3] - 0.1f)*1.11111111f;
+#ifndef THREE_D_THROTTLE	
+// map throttle so under 10% it is zero 
+	float throttle = mapf(rx[3], 0, 1, -0.1, 1);
+	if (throttle < 0)
+		throttle = 0;
+	if (throttle > 1.0f)
+		throttle = 1.0f;
+#endif	
+// +++++++++++++++++++++++++++++++++++++++++++++
+#ifdef THREE_D_THROTTLE	
+	// map throttle so under 10% it is zero 
+	float throttle = mapf(rx[3], 0, 1, -1, 1);
 
+limitf(&throttle, 1.0);
+	
+	if ( throttle > 0 )
+	{
+		bridge_sequencer(FORWARD);	// forward
+	}else 
+	{
+		bridge_sequencer(REVERSE);	// reverse
+	}
+	
+	if ( !throttlesafe_3d )
+	{
+		if (throttle > 0) 
+		{
+			throttlesafe_3d = 1;
+			ledcommand = 1;
+		}
+		throttle = 0;
+	}
+	
+  throttle = fabsf(throttle);
+
+	throttle = mapf (throttle , THREE_D_THROTTLE_DEADZONE , 1, 0 , 1); 	
+	if ( failsafe ) throttle = 0; 
+#endif	// end 3d throttle remap
+// ++++++++++++++++++++++++++++++++++++++++++++
 
 // turn motors off if throttle is off and pitch / roll sticks are centered
 	if ( failsafe || (throttle < 0.001f && (!ENABLESTIX || !onground_long || aux[LEVELMODE] || (fabsf(rx[ROLL]) < (float) ENABLESTIX_TRESHOLD && fabsf(rx[PITCH]) < (float) ENABLESTIX_TRESHOLD && fabsf(rx[YAW]) < (float) ENABLESTIX_TRESHOLD ) ) ) ) 
@@ -319,7 +416,18 @@ else throttle = (rx[3] - 0.1f)*1.11111111f;
 	{// change throttle in flip mode
 		throttle = rx_override[3];
 	}
-		
+	
+  if ( stage == BRIDGE_WAIT ) onground = 1;
+
+	if (currentdir == REVERSE)
+		{
+			// inverted flight
+			//pidoutput[ROLL] = -pidoutput[ROLL];
+			pidoutput[PITCH] = -pidoutput[PITCH];
+			//pidoutput[YAW] = -pidoutput[YAW];	
+		}
+	
+	
 		
 		  // throttle angle compensation
 #ifdef AUTO_THROTTLE
@@ -365,7 +473,15 @@ pidoutput[2] = -pidoutput[2];
 // we invert again cause it's used by the pid internally (for limit)
 pidoutput[2] = -pidoutput[2];			
 #endif
-	
+
+// we invert again cause it's used by the pid internally (for limit)
+               if (currentdir == REVERSE)
+               {
+                       // inverted flight
+                       //pidoutput[ROLL] = -pidoutput[ROLL];
+                       pidoutput[PITCH] = -pidoutput[PITCH];
+                       //pidoutput[YAW] = -pidoutput[YAW];             
+               }	
 
 #ifdef MIX_LOWER_THROTTLE
 
@@ -624,5 +740,63 @@ float dtlimit( float in, int n )
  lastdt[n] = in;
  return in;
     
+}
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// the bridge sequencer creates a pause between motor direction changes
+// that way the motors do not try to instantly go in reverse and have time to slow down
+
+
+void bridge_sequencer(int dir)
+{
+
+	if (dir == DIR1 && stage != BRIDGE_FORWARD)
+	  {
+
+		  if (stage == BRIDGE_REVERSE)
+		    {
+			    stage = BRIDGE_WAIT;
+			    bridgetime = gettime();
+			    pwm_dir(FREE);
+		    }
+		  if (stage == BRIDGE_WAIT)
+		    {
+			    if (gettime() - bridgetime > BRIDGE_TIMEOUT)
+			      {
+				      // timeout has elapsed
+				      stage = BRIDGE_FORWARD;
+				      pwm_dir(DIR1);
+
+			      }
+
+		    }
+
+	  }
+	if (dir == DIR2 && stage != BRIDGE_REVERSE)
+	  {
+
+		  if (stage == BRIDGE_FORWARD)
+		    {
+			    stage = BRIDGE_WAIT;
+			    bridgetime = gettime();
+			    pwm_dir(FREE);
+		    }
+		  if (stage == BRIDGE_WAIT)
+		    {
+			    if (gettime() - bridgetime > BRIDGE_TIMEOUT)
+			      {
+				      // timeout has elapsed
+				      stage = BRIDGE_REVERSE;
+				      pwm_dir(DIR2);
+
+			      }
+
+		    }
+
+	  }
+
+
+
+
 }
 

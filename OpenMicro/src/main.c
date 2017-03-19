@@ -135,6 +135,8 @@ clk_init();
 	i2c_init();	
 	
 	pwm_init();
+	
+	bridge_sequencer(DIR1);
 
 	pwm_set( MOTOR_BL , 0);
 	pwm_set( MOTOR_FL , 0);	 

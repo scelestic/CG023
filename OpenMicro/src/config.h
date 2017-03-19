@@ -6,8 +6,8 @@
 
 // rate in deg/sec
 // for acro mode
-#define MAX_RATE 360.0
-#define MAX_RATEYAW 360.0
+#define MAX_RATE 180.0
+#define MAX_RATEYAW 180.0
 
 // max angle for level mode
 #define MAX_ANGLE_HI 55.0f
@@ -34,11 +34,11 @@
 
 // under this voltage the software will not start 
 // if STOP_LOWBATTERY is defined above
-#define STOP_LOWBATTERY_TRESH 3.3
+#define STOP_LOWBATTERY_TRESH 3.2
 
-// voltage to start warning
+// voltage too start warning
 // volts
-#define VBATTLOW 3.5
+#define VBATTLOW 3.2
 
 // compensation for battery voltage vs throttle drop
 // increase if battery low comes on at max throttle
@@ -120,11 +120,21 @@
 
 #define RATES CH_ON
 
-#define STARTFLIP CH_OFF
+#define STARTFLIP CH_FLIP
 
 #define LEDS_ON CH_ON
 
+#define INVERTEDMODE CH_OFF
 
+// +++++++++++++++++++++++++++++++++++++++++
+// 3d throttle - center off
+#define THREE_D_THROTTLE
+
+#define THREE_D_THROTTLE_DEADZONE 0.2
+
+// this make the controls mirrored in inverted mode
+#define NATIVE_INVERTED_MODE
+// +++++++++++++++++++++++++++++++++++++++++
 
 // aux1 channel starts on if this is defined, otherwise off.
 //#define AUX1_START_ON
@@ -190,8 +200,8 @@
 
 
 // Flash saving features - some auto enabled at the end if this file
-//#define DISABLE_HEADLESS
-//#define DISABLE_FLIP_SEQUENCER
+#define DISABLE_HEADLESS
+#define DISABLE_FLIP_SEQUENCER
 
 // led brightness in-flight ( solid lights only)
 // 0- 15 range
@@ -199,7 +209,10 @@
 
 //#define BUZZER_ENABLE
 
-
+// +++++++++++++++++++++++++++++++++++++++++++++
+// time to change motor direction (uS)
+#define BRIDGE_TIMEOUT 100000
+// +++++++++++++++++++++++++++++++++++++++++++++
 
 
 
